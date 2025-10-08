@@ -1,23 +1,29 @@
 # requirements.txt cho ứng dụng Đánh giá Phương án Kinh doanh
 
-# Thư viện chính cho giao diện web
+# Thư viện giao diện người dùng
 streamlit
 
-# Thư viện xử lý dữ liệu (bắt buộc)
+# Thư viện xử lý dữ liệu
 pandas
 
-# Thư viện cho tính toán tài chính (đặc biệt là NPV, IRR)
+# Thư viện cho tính toán tài chính (NPV, IRR)
+numpy-financial
+
+# Thư viện cơ sở cho numpy-financial
 numpy
 
-# Thư viện cho chức năng AI (sử dụng Gemini API)
+# Thư viện cho chức năng AI (Gemini API)
 google-genai
 
-# Thư viện cần thiết để xử lý file Word (.docx)
+# Thư viện để đọc và xử lý file Word (.docx)
 python-docx
 
-# Thư viện cho xử lý file Excel (nếu cần cho các chức năng khác sau này)
-openpyxl 
+# Thư viện hỗ trợ đọc/ghi file JSON (cho việc chuyển đổi phản hồi của AI)
+# Mặc dù json là built-in, nhưng việc liệt kê đôi khi giúp đảm bảo môi trường.
+# Tuy nhiên, ta dùng gói built-in nên không cần liệt kê.
 
-# tabulate (giữ lại vì có thể hữu ích cho to_markdown() trong một số môi trường)
+# Thư viện hỗ trợ pandas đọc file Excel (cho các chức năng mở rộng sau này)
+openpyxl
+
+# Thư viện hỗ trợ hiển thị DataFrame dưới dạng Markdown
 tabulate
-
