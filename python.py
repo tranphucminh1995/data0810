@@ -6,7 +6,8 @@ import numpy_financial as npf
 from docx import Document
 from google import genai
 from google.genai.errors import APIError
-import re # Thư viện regex để xử lý chuỗi
+import json
+import re
 
 # --- Cấu hình Trang Streamlit ---
 st.set_page_config(
@@ -18,7 +19,6 @@ st.title("Ứng dụng Đánh Giá Phương Án Kinh Doanh (PV & Dòng Tiền) �
 st.markdown("Tải lên file Word chứa phương án kinh doanh, AI sẽ trích xuất các chỉ số và tính toán hiệu quả dự án.")
 
 # --- Cấu hình và Hằng số ---
-# Danh sách các chỉ số cần trích xuất
 FINANCIAL_METRICS = [
     "Vốn đầu tư (Initial Investment)",
     "Dòng đời dự án (Project Life)",
@@ -32,14 +32,11 @@ FINANCIAL_METRICS = [
 def extract_financial_data_from_docx(docx_content, api_key):
     """
     Sử dụng Gemini API để trích xuất các chỉ số tài chính từ nội dung văn bản.
-    Đầu vào: nội dung file Word (string), API Key.
-    Đầu ra: dictionary chứa các chỉ số đã lọc.
     """
     try:
         client = genai.Client(api_key=api_key)
         model_name = 'gemini-2.5-flash'
         
-        # Tạo Prompt hướng dẫn AI trích xuất dữ liệu và định dạng JSON
         metric_list = "\n".join([f"- {m}" for m in FINANCIAL_METRICS])
         prompt = f"""
         Bạn là một chuyên gia tài chính và phân tích dữ liệu. Nhiệm vụ của bạn là đọc nội dung báo cáo kinh doanh bên dưới và trích xuất 
@@ -74,14 +71,11 @@ def extract_financial_data_from_docx(docx_content, api_key):
         
         # Trích xuất chuỗi JSON từ phản hồi của AI
         json_string = response.text.strip()
-        # Xóa các khối mã Markdown nếu có
         if json_string.startswith("```json"):
             json_string = json_string[7:]
         if json_string.endswith("```"):
             json_string = json_string[:-3]
         
-        # Chuyển đổi chuỗi JSON thành Python dictionary
-        import json
         data = json.loads(json_string)
         return data
 
@@ -90,7 +84,6 @@ def extract_financial_data_from_docx(docx_content, api_key):
         return None
     except json.JSONDecodeError:
         st.error("Lỗi phân tích cú pháp JSON từ AI. Vui lòng thử lại hoặc điều chỉnh prompt.")
-        st.code(f"Phản hồi thô của AI: {response.text}", language="json")
         return None
     except Exception as e:
         st.error(f"Đã xảy ra lỗi không xác định trong quá trình trích xuất AI: {e}")
